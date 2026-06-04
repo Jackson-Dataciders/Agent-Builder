@@ -42,8 +42,9 @@ export default function ChatWindow({ t, resetKey, agentName }: ChatWindowProps) 
     const userMsg = newMessage("user", text);
     const assistantMsg = newMessage("assistant", "");
 
-    const context = memory.getContext();
-    setMessages([...context.messages, userMsg, assistantMsg]);
+    const full = memory.getContext(); // full transcript -> display
+    const apiCtx = memory.getApiContext(); // bounded window -> Mistral
+    setMessages([...full.messages, userMsg, assistantMsg]);
     setStreamingId(assistantMsg.id);
 
     const settings = storage.getSettings();
@@ -55,9 +56,9 @@ export default function ChatWindow({ t, resetKey, agentName }: ChatWindowProps) 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...context.messages, userMsg],
+          messages: [...apiCtx.messages, userMsg],
           agentConfig,
-          summary: context.summary,
+          summary: apiCtx.summary,
           apiKey: settings.apiKey,
           language: settings.language,
         }),

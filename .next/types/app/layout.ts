@@ -1,4 +1,4 @@
-// File: C:\Users\Jackson.Forner\Desktop\Agent Builder -Mistral\app\layout.tsx
+// File: C:\Users\Jackson.Forner\Desktop\Agent-Builder\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
