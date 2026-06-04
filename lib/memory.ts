@@ -23,8 +23,13 @@ export const memory = {
     return storage.getAppMemory();
   },
 
+  getApiContext(): { summary: string; messages: Message[] } {
+    const { summary, messages, summarizedCount } = storage.getAppMemory();
+    return { summary, messages: messages.slice(summarizedCount) };
+  },
+
   clearHistory(): AppMemory {
-    const fresh: AppMemory = { summary: "", messages: [] };
+    const fresh: AppMemory = { summary: "", messages: [], summarizedCount: 0 };
     storage.setAppMemory(fresh);
     return fresh;
   },
@@ -35,18 +40,21 @@ export const memory = {
   ): Promise<AppMemory> {
     const current = storage.getAppMemory();
     let summary = current.summary;
-    let messages = [...current.messages, userMsg, assistantMsg];
+    let summarizedCount = current.summarizedCount;
+    const messages = [...current.messages, userMsg, assistantMsg]; // full, kept
 
-    if (messages.length > MAX_RETAINED) {
-      const overflow = messages.slice(0, messages.length - MAX_RETAINED);
+    const rawCount = messages.length - summarizedCount;
+    if (rawCount > MAX_RETAINED) {
+      const overflowEnd = messages.length - MAX_RETAINED; // exclusive
+      const overflow = messages.slice(summarizedCount, overflowEnd);
       const newSummary = await summarizeOverflow(overflow);
       if (newSummary) {
         summary = summary ? `${summary}\n${newSummary}` : newSummary;
       }
-      messages = messages.slice(messages.length - MAX_RETAINED);
+      summarizedCount = overflowEnd; // fold overflow into summary, keep raw tail
     }
 
-    const updated: AppMemory = { summary, messages };
+    const updated: AppMemory = { summary, messages, summarizedCount };
     storage.setAppMemory(updated);
     return updated;
   },

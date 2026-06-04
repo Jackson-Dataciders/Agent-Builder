@@ -21,5 +21,6 @@ export interface Settings {
 
 export interface AppMemory {
   summary: string;
-  messages: Message[];
+  messages: Message[]; // FULL history — never trimmed
+  summarizedCount: number; // # of leading messages folded into `summary`
 }

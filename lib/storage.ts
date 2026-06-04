@@ -18,6 +18,7 @@ const DEFAULT_AGENT_CONFIG: AgentConfig = {
 const DEFAULT_APP_MEMORY: AppMemory = {
   summary: "",
   messages: [],
+  summarizedCount: 0,
 };
 
 const DEFAULT_SETTINGS: Settings = {
